@@ -1,0 +1,10 @@
+---
+- name: Test that SNMPv3 auth is configured
+  ansible.builtin.assert:
+    that:
+      - snmpd_auth.snmpv3_auth_pass is defined
+      - snmpd_auth.snmpv3_auth_pass is string
+      - snmpd_auth.snmpv3_priv_pass is defined
+      - snmpd_auth.snmpv3_priv_pass is string
+      - snmpd_auth.snmpv3_user is defined
+      - snmpd_auth.snmpv3_user is string

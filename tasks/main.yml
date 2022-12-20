@@ -1,0 +1,47 @@
+---
+- name: include assert.yml
+  ansible.builtin.import_tasks: assert.yml
+  run_once: yes
+  delegate_to: localhost
+
+- name: Install snmpd
+  ansible.builtin.package:
+    name: "{{ snmpd_packages }}"
+    state: present
+
+- name: Make sure snmpd isn't running
+  ansible.builtin.service:
+    name: snmpd
+    state: stopped
+
+- name: Create an SNMPv3 user on Debian-flavored systems
+  command: net-snmp-config --create-snmpv3-user -ro -A '{{ snmpd_auth.snmpv3_auth_pass }}' -X '{{ snmpd_auth.snmpv3_priv_pass }}' -a SHA -x AES '{{ snmpd_auth.snmpv3_user }}'
+  when: snmpd_auth and ansible_os_family == 'Debian'
+
+- name: Create an SNMPv3 user on Redhat-flavored systems
+  command: net-snmp-create-v3-user -ro -A '{{ snmpd_auth.snmpv3_auth_pass }}' -X '{{ snmpd_auth.snmpv3_priv_pass }}' -a SHA -x AES '{{ snmpd_auth.snmpv3_user }}'
+  when: snmpd_auth and ansible_os_family == 'Redhat'
+
+- name: Create conf.d Folder
+  ansible.builtin.file:
+    path: /etc/snmp/conf.d
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
+- name: Configure snmpd
+  ansible.builtin.template:
+    src: snmpd.conf.j2
+    dest: /etc/snmp/snmpd.conf
+    mode: "0600"
+    owner: root
+    group: root
+  notify:
+    - restart snmpd
+
+- name: Start and enable snmpd
+  ansible.builtin.service:
+    name: snmpd
+    state: started
+    enabled: yes

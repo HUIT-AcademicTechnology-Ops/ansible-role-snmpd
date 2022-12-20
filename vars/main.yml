@@ -1,0 +1,14 @@
+---
+_snmpd_packages:
+  default:
+    - snmpd
+  Debian:
+    - snmp
+    - snmpd
+    - libsnmp-dev
+  Redhat:
+    - net-snmp
+    - net-snmp-libs
+    - net-snmp-utils
+
+snmpd_packages: "{{ _snmpd_packages[ansible_os_family] | default(_snmpd_packages['default'] ) }}"

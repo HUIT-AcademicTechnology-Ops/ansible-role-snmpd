@@ -1,0 +1,23 @@
+{{ ansible_managed | comment }}
+
+agentAddress {{ snmpd_agent_address }}
+
+{% if snmpd_views is defined %}
+{% for view in snmpd_views %}
+view {{ view.name }} {{ view.type }} {{ view.subtree }} {% if view.mask is defined %}{{ view.mask }}{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if snmpd_accesses is defined %}
+{% for access in snmpd_accesses %}
+access {{ access.group }} "{{ access.context }}" {{ access.security_model }} {{ access.security_level }} {{ access.prefix }} {{ access.read }} {{ access.write }} {{ access.notif }}
+{% endfor %}
+{% endif %}
+
+syslocation {{ snmpd_syslocation }}
+syscontact {{ snmpd_syscontact }}
+sysservices {{ snmpd_sysservices }}
+
+dontLogTCPWrappersConnects {{ snmpd_dontlogtcpwrappersconnects }}
+
+includeDir /etc/snmp/conf.d
