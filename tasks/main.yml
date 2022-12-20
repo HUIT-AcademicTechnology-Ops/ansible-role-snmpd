@@ -20,7 +20,7 @@
 
 - name: Create an SNMPv3 user on Redhat-flavored systems
   command: net-snmp-create-v3-user -ro -A '{{ snmpd_auth.snmpv3_auth_pass }}' -X '{{ snmpd_auth.snmpv3_priv_pass }}' -a SHA -x AES '{{ snmpd_auth.snmpv3_user }}'
-  when: snmpd_auth and ansible_os_family == 'Redhat'
+  when: snmpd_auth and ansible_os_family == 'RedHat'
 
 - name: Create conf.d Folder
   ansible.builtin.file:

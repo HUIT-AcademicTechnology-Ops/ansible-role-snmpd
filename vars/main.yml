@@ -6,7 +6,7 @@ _snmpd_packages:
     - snmp
     - snmpd
     - libsnmp-dev
-  Redhat:
+  RedHat:
     - net-snmp
     - net-snmp-libs
     - net-snmp-utils
